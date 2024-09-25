@@ -1,0 +1,40 @@
+{
+    "عامية": {
+        "nouns": {
+            "حوش": "yard",
+            "مشلح": "overcoat"
+        },
+        "verbs": {
+            "زرف": "to steal or take sneakily",
+            "نقز": "jump"
+        },
+        "adjectives": {
+            "مبسوط": "happy",
+            "زعلان": "sad",
+            "مستانس": "joyful",
+            "شبعان": "full (after eating)"
+        }
+    },
+    "شرقية": {
+        "nouns": {
+            "ماي": "water",
+            "خاشوقة": "spoon",
+            "عرموط": "pear",
+            "صمنديقة": "foolish person",
+            "غرشة": "bottle"
+        },
+        "verbs": {
+            "هَدَّه": "leave it or drop it",
+            "ادن": "Scoot over",
+            "دِش": "enter",
+            "سَيِّر": "pass by or visit"
+        },
+        "adjectives": {
+            "باصج": "low salt",
+            "غلج": "difficult",
+            "لثد": "sticky",
+            "مصكّر": "closed",
+            "مسفهل": "very happy"
+        }
+    }
+}
