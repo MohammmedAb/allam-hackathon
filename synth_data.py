@@ -1,4 +1,5 @@
 import argparse
+import re
 from openai import OpenAI
 import random
 import os
@@ -118,6 +119,10 @@ def main():
             # Call OpenAI API to generate text
             output = call_openai_api(prompt)
 
+            # remove tashkeel
+            tashkeel = re.compile(r'[\u0617-\u061A\u064B-\u0652]')
+            output = tashkeel.sub('', output)
+
             # Append result to the list
             result = {
                 "dialect": dialect,
@@ -127,7 +132,6 @@ def main():
             }
             results.append(result)
 
-            # print the result
             # print(f"Prompt:\n{prompt}")
             # print(f"Generated Text:\n{output}\n{'-'*50}\n")
 

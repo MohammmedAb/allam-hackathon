@@ -1,1 +1,5 @@
-- [ ] Add more 
+- [ ] Create test part on the pretraning dataset
+- [ ] Create the benchmark 
+    - [ ] benchmark gpt4 and allam on the benchmark
+- [ ] pretrain the model on the dataset
+- [ ] Create the finetuning dataset 

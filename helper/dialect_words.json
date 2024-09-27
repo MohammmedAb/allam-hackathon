@@ -24,16 +24,16 @@
             "غرشة": "bottle"
         },
         "verbs": {
-            "هَدَّه": "leave it or drop it",
+            "هده": "leave it or drop it",
             "ادن": "Scoot over",
-            "دِش": "enter",
-            "سَيِّر": "pass by or visit"
+            "دش": "enter",
+            "سير": "pass by or visit"
         },
         "adjectives": {
             "باصج": "low salt",
             "غلج": "difficult",
             "لثد": "sticky",
-            "مصكّر": "closed",
+            "مسكر": "closed",
             "مسفهل": "very happy"
         }
     }
