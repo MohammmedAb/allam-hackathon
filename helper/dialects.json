@@ -1,6 +1,5 @@
 
 [
-    // 150 instances of each dialect, but "عامية" has 300 instances = 150 * 5 + 300 = 1050
     "نجدي", 
     "حجازي", 
     "شرقية", 

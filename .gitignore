@@ -1,3 +1,5 @@
 .env
 model
 outputs/
+KAGGLE_CONFIG_DIR/
+sada/

@@ -46,7 +46,7 @@ def generate_story(dialect, dialect_words, story_features, dialect_features):
     word, word_meaning = random.choice(list(word_dict.items()))
     
     # Select features for the story
-    features = random.sample(story_features, 3)
+    features = random.sample(story_features, 2)
     features_str = ", ".join(features)
     prompt = f"""
 اكتب قصة قصيرة من 3 الى 5 فقرات باللهجة السعودية ال{dialect}. هذي معلومات عن اللهجة ال{dialect} تساعدك استفيد منها وانت تكتب القصة: {dialect_features}
@@ -85,7 +85,7 @@ def main():
     parser.add_argument("--dialects", nargs='+', required=True, help="List of dialects to generate data for.")
     parser.add_argument("--data_type", choices=["dialect_info", "story"], required=True, help="Type of data to generate.")
     parser.add_argument("--num_instances", type=int, default=1, help="Number of instances to generate.")
-    parser.add_argument("--output_file", type=str, default="outputs/output_{}_{}_{}_{:02d}.json".format(day, month, hour, int(minute)+3), help="Output file path to save the generated data.")
+    parser.add_argument("--output_file", type=str, default="outputs/output_{}_{}_{}_{:02d}.jsonl".format(day, month, hour, int(minute)+3), help="Output file path to save the generated data.")
     args = parser.parse_args()
 
     # Load external JSON files
@@ -105,42 +105,58 @@ def main():
     dialect_features = dialects_features.get(args.dialects[0])
 
 
-    for dialect in args.dialects:
-        for _ in range(args.num_instances):
-            if args.data_type == "dialect_info": # Option 1: prompt to generate information about the dialect
-                tone = random.choice(["تعليمية", "حوارية"])
-                response_dialect = random.choice([dialect, "اللغة العربية الفصحى"])
-                prompt = generate_data_about_dialect(dialect, tone, response_dialect)
-            elif args.data_type == "story": # Option 2: prompt to generate a story written in the dialect
-                prompt = generate_story(dialect, dialect_words, story_features, dialect_features)
-            else:
-                continue
+    # Open the output file in append mode
+    os.makedirs(os.path.dirname(args.output_file), exist_ok=True)  # Ensure the directory exists
+    output_file_exists = os.path.exists(args.output_file)
 
-            # Call OpenAI API to generate text
-            output = call_openai_api(prompt)
+    if not output_file_exists:
+        # If the file does not exist, create it
+        open(args.output_file, 'w', encoding='utf-8').close()
 
-            # remove tashkeel
-            tashkeel = re.compile(r'[\u0617-\u061A\u064B-\u0652]')
-            output = tashkeel.sub('', output)
+    with open(args.output_file, 'a', encoding='utf-8') as f:
+        for dialect in args.dialects:
+            for _ in range(args.num_instances):
+                if args.data_type == "dialect_info":  # Option 1: prompt to generate information about the dialect
+                    tone = random.choice(["تعليمية", "حوارية"])
+                    response_dialect = random.choice([dialect, "اللغة العربية الفصحى"])
+                    prompt = generate_data_about_dialect(dialect, tone, response_dialect)
+                elif args.data_type == "story":  # Option 2: prompt to generate a story written in the dialect
+                    prompt = generate_story(dialect, dialect_words, story_features, dialect_features)
+                else:
+                    continue
 
-            # Append result to the list
-            result = {
-                "dialect": dialect,
-                "data_type": args.data_type,
-                "prompt": prompt.strip(),
-                "generated_text": output
-            }
-            results.append(result)
+                try:
+                    # Call OpenAI API to generate text
+                    output = call_openai_api(prompt)
 
-            # print(f"Prompt:\n{prompt}")
-            # print(f"Generated Text:\n{output}\n{'-'*50}\n")
+                    # remove Tashkeel 
+                    tashkeel = re.compile(r'[\u0617-\u061A\u064B-\u0652]')
+                    output = tashkeel.sub('', output)
 
-    # Save results to JSON file
-    with open(args.output_file, 'w', encoding='utf-8') as f:
-        json.dump(results, f, ensure_ascii=False, indent=4)
+                    # Prepare the result
+                    result = {
+                        "dialect": dialect,
+                        "data_type": args.data_type,
+                        "prompt": prompt.strip(),
+                        "generated_text": output
+                    }
+
+                    # Write the result to the output file
+                    json.dump(result, f, ensure_ascii=False)
+                    f.write('\n')  # Newline for JSON Lines format
+
+                    # Optionally, flush to ensure data is written to disk
+                    f.flush()
+
+                    # Print progress
+                    print(f"Generated data for dialect '{dialect}'. num = {_ + 1}/{args.num_instances}")
+
+                except Exception as e:
+                    print(f"An error occurred: {e}")
+                    # Optionally, handle specific exceptions or log them
+                    continue  # Skip to the next iteration
 
     print(f"All generated data has been saved to {args.output_file}")
-
 if __name__ == "__main__":
     # Example usage:
     # python synth_data.py --dialects شرقية --data_type story --num_instance 4
